@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import './Deck.css';
+import Card from './Card';
 import axios from 'axios';
 const API_BASE_URL = "https://deckofcardsapi.com/api/deck";
 
@@ -18,10 +20,8 @@ async getCard(){
     let id = this.state.deck.deck_id;
     try {
         let cardURL = `${API_BASE_URL}/${id}/draw/`;
-        //make request using deck id
         let cardRes = await axios.get(cardURL);
-        //set state using new card info from api
-        if(cardRes.data.remaining === 0) {
+        if(!cardRes.data.success) {
             throw new Error("No card remaining!")
         }
         let card = cardRes.data.cards[0];
@@ -37,17 +37,18 @@ async getCard(){
 
     } catch(err){
         alert(err);
-    }
-
-
-   
+    } 
 } 
 
     render() {
+        const cards = this.state.drawn.map(c => (
+            <Card key={c.id}name={c.name} image={c.image} />
+        ));
         return (
             <div>
                 <h1>Card Dealer</h1>
                 <button onClick={this.getCard}>Get Card!</button>
+                <div className='Deck-cardarea'>{cards}</div>
             </div>
         )
     }
